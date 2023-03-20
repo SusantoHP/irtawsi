@@ -1,0 +1,245 @@
+---
+title   : "IRT Analysis With Steps and Interpretation (irtawsi)"
+output  : html_document
+---
+`r br()`
+`r br()`
+`r br()`
+
+#### `r ifelse(language()=="indonesia","Berikut merupakan ringkasan hasil analisis butir dengan menggunakan _package_ irtAWI : ","The following report is the results summary   of item analysis using __package__ irtAWI:")`
+
+#### **`r ifelse(language()=="indonesia","1.FIT MODEL  ","1. IRT MODEL FIT")`**
+
+```{r , comment=NA, echo=FALSE,out.width='50%'}
+bahasa<-language()
+model<-modelmodel()
+modelirt<- mdlok()
+if (model=="DHICOTOMOUS"){
+  didi<- ifelse(bahasa=="indonesia","Dikotomus","Dhicotomous")}
+if (model=="POLYTOMOUS"){
+  didi<- ifelse(bahasa=="indonesia","Politomus","Polytomous")
+}
+par(mar = c(5, 4, 0.5, 2))
+    plot(x = 0:1, y = 0:1, ann = FALSE,   bty = "o", type = "n",  xaxt = "n", yaxt = "n")
+    text(x = 0.5, y = 0.95,ifelse(bahasa=="indonesia","Model Terbaik untuk Data Kamu ","The Best Model For Your Data"),  cex = 2, col="blue", font=2, adj=0.5)
+    text(x = 0.5, y = 0.55,modelirt,cex = 10,col="blue",  font=2, adj=0.5)
+    text(x = 0.5, y = 0.125,didi,  cex = 2.5, col="blue", font=2, adj=0.5)
+
+```
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","2.MENENTUKAN MODEL FIT","2.DETERMAINING FIT MODEL")`**
+
+#### `r ifelse(language()=="indonesia","Kecocokan model pada gambar diatas ditentukan dengan menggunakan perbandinan nilai AIC seperti pada tabel 1 dibawah ini. Jika anda menggunakan Kriteria yang lain, silakan sesuaikan model yang anda pilih","The mode FIT as in the figure above is determined using the comparison of AIC values as shown in table 1 below. However, if you use other criteria, please adjust the model you choose")`
+
+```{r table, echo=FALSE}
+modelterbaik<-modelterbaik()
+ketpermod<-ifelse(language()=="indonesia","Tabel 1. Memilih  model fit","Table 1. Choose the fit model ")
+modelterbaik%>% gt() %>% tab_header(title =md(ketpermod),   )
+```
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","3.PERBANDINGAN BUTIR FIT","3.FIT ITEM COMPARE")`**
+
+```{r , echo=FALSE,comment=NA}
+pirt<-perbandinganitemfit()
+ketmod<-ifelse(language()=="indonesia","Tabel 2. Butir Fit Pada Stiap Model ","Table 2. The Fit Item in each Model")
+pirt%>%
+gt() %>%
+tab_header(
+    title =md(ketmod),
+    )
+
+```
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","4. ASUMSI IRT","4.IRT ASSUMPTION")`**
+
+#### `r ifelse(language()=="indonesia","Terdapat beberapa asumsi yang harus terpenuhi dalam menggunakan IRT analisis butir tes, yaitu (1) **_Unidimensi_**, (2) **_Independensi Lokal_**, (3) **_Invariansi Paramemeter_**. Selanjutnya, setiap pengujian Asumsi tersebut dapat dilihat pada bagian dibawah ini.","There are several assumptions that must be fulfilled in using IRT test item analysis, namely (1) **_Unidimensional_**, (2) **_Local Independence_**, (3) **_Parameter Invariance_**. Furthermore, each of these assumption tests can be seen in the section below.")`
+
+#### **`r ifelse(language()=="indonesia","4.1.Dimensionalitas","4.1. Dimensionality")`**
+
+#### `r ifelse(language()=="indonesia","Pengujian Dimensionalitas dapat anda lihat pada bagian __4.1.b__ atau __4.1.c__.","You can see the dimensionality test in section __4.1.b__ or __4.1.c__.")`
+
+#### **`r ifelse(language()=="indonesia","4.1.a.KMO","4.1.a.KMO")`**
+
+#### `r kmook()`
+
+#### **`r ifelse(language()=="indonesia","4.1.b. Kesimpulan Unidimensi","4.1.b Unidimentionality Conclusion")`**
+
+```{r,echo=FALSE,results='hide'}
+unidimensiok<-kesimunidim()
+```
+
+#### `r unidimensiok`
+
+#### **`r ifelse(language()=="indonesia","4.1.c. _Scree Plot_ Hasil Analisis Faktor Eksploratori","4.1.c  _Scree Plot_ of EFA")`**
+
+```{r, echo=FALSE,fig.height=8, fig.width=12,comment=NA,warning=FALSE,message=FALSE,results='hide'}
+psych::fa.parallel(hps(),  fa = 'fa')
+```
+
+#### **`r ifelse(language()=="indonesia","4.2.Independensi Lokal","4.2.Local Indepndence")`**
+
+```{r,results='hide',echo=FALSE}
+rrr<-rrr()
+```
+
+#### `r ifelse(language()=="indonesia","Matrik berikut merupakan LD-Matrik yang digunakan untuk mendeteksi adanya ketergantungan lokal antara butir satu dengan butir yang lain. LD-matrik yang anda gunakan tegantung pada metode yang anda pilih pada _sofware_ yaitu **LD** atau **Q3**. Untuk membuktikan adanya ketergantungan lokal anda bisa mengecek satu persatu nilai pada LD-matrik atau menggunakan Interpretasi yang disediakan oleh _software_.**CATATAN : Instrumen dikatakan baik jika tidak terjadi ketergantungan lokal**. ","The following matrix is an LD-Matric that is used to detect local dependencies between one item and another. The LD-matrix you use depends on the method you choose in _software_ namely **LD** or **Q3**. To prove local dependency, you can check each element values of LD-matrix or use the interpretation result provided by _software_.**NOTE: The instrument is said to be good if there is no local dependency**.")`
+
+#### **4.2.a.LD-Matrix**
+#### Tabel 2.**LD-Matrix**
+```{r,echo=FALSE,comment=NA,warning=FALSE,message=FALSE}
+      
+      DT::datatable(round(rrr,2),class= 'compact stripe', caption = "", rownames = T,
+                    options = list(autoWidth = TRUE, scrollX = TRUE,pageLength = 7,
+                                   columnDefs = list(list(width = '100px', targets = 1)),
+                                   paging = TRUE, searching = FALSE), selection='none')
+```
+
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","4.2.b. Interpretasi LD ","4.2.b. LD Interpretation")`**
+
+#### `r LIinterpret()`
+
+#### **`r ifelse(language()=="indonesia","4.3. Invariansi Parameter","4.3. Parameter Invariant ")`**
+#### `r ifelse(language()=="indonesia","Terdapat dua bagian Pembuktian insvariansi pada parameter IRT yaitu (1) apakah parameter butir dipengaruhi oleh parameter kemampuan peserta tes. dan (2) apakah parameter kemampuan peserta tes dipengaruhi oleh parameter butir.","There are two parts to prove the invariance of the IRT parameters, namely (1) whether the item parameters are affected by the ability of the test takers. and (2) whether the test taker's ability parameters are affected by the item parameters.")`
+
+
+#### **`r ifelse(language()=="indonesia","4.3.a. Gambar Invariansi tiap parameter","4.3.a. Invariant graph for each Parameters ")`**
+```{r, echo=FALSE, fig.height=8, fig.width=10,comment=NA,warning=FALSE,message=FALSE,results='hide',fig.show='asis'}
+invarplot()
+```
+
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","4.3.b. Interpretasi dari pembuktian invariansi","4.3.b. Interpretation of invariant proof")`**
+
+```{r, echo=FALSE,comment=NA}
+invariansi<- invarinterpret()
+ketinv<-ifelse(language()=="indonesia","Tabel 3. Interpretasi Invariansi ","Table 3. Invariant Interpretation ")
+invariansi%>%
+gt() %>%
+tab_header(
+    title =md(ketinv),
+    )
+```
+
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","5. KARAKTERISTIK BUTIR","5.  ITEMS CHARACTERISTIC")`**
+
+
+```{r, echo=FALSE,comment=NA}
+pirt1<-characterbutir()
+
+ketcar<-ifelse(language()=="indonesia","Tabel 4. karakteristik Parameter butir ","Table 4. Items Parameter Characteristic")
+pirt1%>%
+gt() %>%
+tab_header(
+    title =md(ketcar),
+    )
+```
+
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","6. KARAKTERISTIK KEMAMPUAN","6. ABILITY CHARACTERISTIC")`**
+
+```{r, echo=FALSE,comment=NA}
+abilitypar<-data.frame("Peserta"=1:nrow(hps()),parabutir(),levelability())
+ketab<-ifelse(language()=="indonesia","Tabel 5. Parameter Kemampuan ","Table 5. The Ability Parameter")
+abilitypar%>%
+gt() %>%
+tab_header(
+    title =md(ketab),
+    )
+```
+
+
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","7. KURVA KARAKTERISTIK TIAP BUTIR","7. ITEMS CHARACTERISTIC CURVE (ICC)")`**
+
+```{r , echo=FALSE, fig.height=4, fig.width=4,comment=NA,warning=FALSE,message=FALSE}
+printiccplot()
+```
+
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","8. KURVA INFORMASI BUTIR","8. ITEMS INFORMATION CURVE (IIC)")`**
+
+```{r , echo=FALSE, fig.height=4, fig.width=4,comment=NA,warning=FALSE,message=FALSE}
+pirnticcebiasa()
+```
+
+`r br()`
+
+#### **`r ifelse(language()=="indonesia","9. FUNGSI INFORMASI TES","9. TEST INFORMATION FUNCTION")`**
+
+#### **`r ifelse(language()=="indonesia","9.1. Gambar Fungsi Informasi Tes","9.1. Test Information Function Graph")`**
+
+```{r, echo=FALSE, fig.height=8, fig.width=12,comment=NA,warning=FALSE,message=FALSE}
+
+    mdlokk<-mdlokk()
+    lin<- nitemfit()
+    Theta <-c(-50,50)
+    pplot1<-plot(mdlokk, type="info",theta_lim =Theta,which.item=lin,n=10000)
+    pplot2<-plot(mdlokk, type="SE",theta_lim =Theta,which.item=lin, n=10000)
+    infori<-pplot1$panel.args[[1]]$y #nilai fungsi informasi
+    infore<-pplot2$panel.args[[1]]$y #nilai fungsi SEM
+    inforTetha<-pplot1$panel.args[[1]]$x #Theta
+    
+    urutan<-which(infori==max(infori))#menentukan letak informasi tertinggi
+    xki<-inforTetha[1:(urutan-1)]
+    yiki<-infori[1:(urutan-1)] - infore[1:(urutan-1)]
+    letakyikimin<-min(which(yiki> 0))
+    kunciby<-infori[1:(urutan-1)][letakyikimin]   #ordinat perpotongan sebelah kiri
+    kuncib<-xki[letakyikimin]                  #absis perpotongan sebelah kiri
+    
+    xka<-inforTetha[urutan:length(infore)]
+    yika<-infori[urutan:length(infore)]-infore[urutan:length(infore)]
+    letakyikamax<-max(which(yika> 0))
+    kunciay<-infori[urutan:length(infore)][letakyikamax]   #ordinat perpotongan sebelah kiri
+    kuncia<-xka[letakyikamax]                  #absis perpotongan sebelah kiri
+    
+    
+    if (kuncib <= -4){
+      kuncib1<--4
+    }
+    if (kuncib > -4){
+      kuncib1 <- kuncib
+    }
+    if (kuncia >= 4){
+      kuncia1 <- 4
+    }
+    if (kuncia < 4){
+      kuncia1 <- kuncia
+    }
+    judul<-ifelse(language()=="indonesia","Daerah Irisan dari fungsi Fungsi Informasi dan Standar Eror  ","The Intersection Area of Function Information and Standart Errorr ")
+    area <- areainfo(mdlokk, c(kuncib1,kuncia1),which.items = lin)
+    Theta1 <- matrix(seq(-4,4,by=0.01))
+    info <- testinfo(mdlokk, Theta1)
+    plot(info ~ Theta1, type = 'l')
+    pick <- Theta1 >= kuncib1 & Theta1 <=kuncia1
+    polygon(c(kuncib1, Theta1[pick],kuncia1), c(kunciby, info[pick], kunciay), col='grey', border =  "blue")
+    title(judul)
+
+
+```
+
+`r br()``
+
+#### **`r ifelse(language()=="indonesia","9.2. Interpretasi Fungsi Informasi Tes","9.2. Test Information Function Interpretation")`**
+
+
+```{r,echo=FALSE,comment=NA}
+ketfi<-ifelse(language()=="indonesia","Tabel 6. Interpretasi Fungsi Informasi ","Table 6. Information Function Interpretation ")
+fungsiinformasi<-interpretfise()
+fungsiinformasi%>%
+gt() %>%
+tab_header(
+    title =md(ketfi),
+    )
+```
+
