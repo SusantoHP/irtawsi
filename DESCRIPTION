@@ -1,7 +1,7 @@
 Package: irtawsi
 Type: Package
-Title: Items Response Theory Analysis With Steps and Interpretation
-Version: 0.1.0
+Title: Items Response Theory Analysis with Steps and Interpretation
+Version: 0.3.0
 Authors@R: c(
     person("Hari Purnomo", "Susanto", , "haripurnomosusanto@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5376-1597")),
