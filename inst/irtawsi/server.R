@@ -1,6 +1,8 @@
+
 server<-function(input,output,session){
 
   output$flowchart<-renderPlot({
+    old.par<-par(no.readonly = TRUE)
     par(mar = c(1, 1, 1, 1))
     elpos <- coordinates (c(2, 2,2, 2,2,2))
     for (i in 1:5)
@@ -31,7 +33,10 @@ server<-function(input,output,session){
     textrect(elpos[9,], 0.15, 0.05, lab = step4,box.col = "green",shadow.col = "darkblue", shadow.size = 0.005, cex = 1.5)
     textrect(elpos[10,], 0.15, 0.05, lab = step4a,box.col = "grey",shadow.col = "red", shadow.size = 0.005, cex = 1.5)
     textrect(elpos[11,], 0.15, 0.05, lab = step5,box.col = "green",shadow.col = "darkblue", shadow.size = 0.005, cex = 1.5)
-    textrect(elpos[12,], 0.15, 0.05, lab = step5a,box.col = "grey",shadow.col = "red", shadow.size = 0.005, cex = 1.5)      })
+    textrect(elpos[12,], 0.15, 0.05, lab = step5a,box.col = "grey",shadow.col = "red", shadow.size = 0.005, cex = 1.5)
+
+    par(old.par)
+    })
 
 
 
@@ -87,18 +92,22 @@ server<-function(input,output,session){
     kmo<-kmook1()
     if (kmo>=0.5){gambarunidim1()}
     if(kmo<0.5){
+      old.par<-par(no.readonly = TRUE)
       par(mar = c(10, 4, 0.5, 2))
       plot(x = 0:1, y = 0:1, ann = FALSE,   bty = "o", type = "n",  xaxt = "n", yaxt = "n")
       text(x = 0.5, y = 0.75,ifelse(input$boso=="in_indonesia", "Maaf, data sample Anda tidak mencukupi","Sorry, your sample data is not enough"),cex = 6,col="red",  font=2, adj=0.5)
-      text(x = 0.5, y = 0.25,ifelse(input$boso=="in_indonesia", "Silakan tambahkan data sample anda ","Please add your sample data"),cex = 5,col="blue",  font=2, adj=0.5)}})
+      text(x = 0.5, y = 0.25,ifelse(input$boso=="in_indonesia", "Silakan tambahkan data sample anda ","Please add your sample data"),cex = 5,col="blue",  font=2, adj=0.5)
+      par(old.par)
+      }
+    })
 
   kesimunidim<-reactive({
     kmo<-kmook1()
     unid<-gambarunidim1()
     per<-unid[[1]][1]/sum(round(unid[[1]][1:ncol(hps())]),3)
     if(kmo<0.5){unidim<-ifelse(input$boso=="in_indonesia","Maaf data sample Anda tidak mencukupi untuk bisa menggunakan analisis faktor dalam pembuktian unidimensi","Sorry, your sample data is not sufficient to be able to use factor analysis in unidimensional proofs")}
-    if(per>=0.2 && kmo>=0.5){unidim<-ifelse(input$boso=="in_indonesia",paste("Ratio=",round(per,4),"=",round(per,4)*100,"%.","Hasil ini menjelaskan bahwa faktor pertama menyumbang setidaknya 20% dari varians (Hambleton et al., 1991; Retnawati, 2016).  Sehingga, asumsi <b>Unidimensi  Terpenuhi</b> atau butir-butir dalam tes mengukur <b>satu laten trait</b>." ),paste("The Ratio=",round(per,4),"=",round(per,4)*100,"%.","These results explain that the first factor accounts for at least 20% of the variance (Hambleton et al., 1991; Retnawati, 2016). Thus, the <b>Unidimension  assumption is met</b> or the items in the test measure <b> one latent trait</b>."))}
-    if(per < 0.2 && kmo>=0.5){unidim<-ifelse(input$boso=="in_indonesia",paste("Ratio=",round(per,4),"=",round(per,4)*100,"%.","Hasil ini menjelaskan bahwa faktor pertama <b>tidak</b> menyumbang setidaknya 20% dari varians (Hambleton et al., 1991; Retnawati, 2016).  Sehingga, asumsi <b>unidimensi tidak terpenuhi</b> atau butir-butir dalam tes mengukur <b>lebih dari satu laten trait</b>. <b>Solusi: </b> untuk mengatasi kasus ini, anda bisa menggunakan <b>Model IRT Multidimensi</b>."),paste("The Ratio=",round(per,4),"=",round(per,4)*100,"%.","These results explain that the first factor does <b>not</b> account for at least 20% of the variance (Hambleton et al., 1991; Retnawati, 2016). Thus, the <b> Unidimension assumption is Not met</b>  or the items in the test measure <b>More Than One latent trait</b>. <b>Solution: </b> To overcome this case, you can use the Multidimensional IRT model."))}
+    if(per>=0.2 && kmo>=0.5){unidim<-ifelse(input$boso=="in_indonesia",paste("Ratio=",round(per,4),"=",round(per,4)*100,"%.","Hasil ini menjelaskan bahwa faktor pertama menyumbang setidaknya 20% dari varians (Retnawati, 2014).  Sehingga, asumsi <b>Unidimensi  Terpenuhi</b> atau butir-butir dalam tes mengukur <b>satu laten trait</b>." ),paste("The Ratio=",round(per,4),"=",round(per,4)*100,"%.","These results explain that the first factor accounts for at least 20% of the variance (Retnawati, 2014). Thus, the <b>Unidimension  assumption is met</b> or the items in the test measure <b> one latent trait</b>."))}
+    if(per < 0.2 && kmo>=0.5){unidim<-ifelse(input$boso=="in_indonesia",paste("Ratio=",round(per,4),"=",round(per,4)*100,"%.","Hasil ini menjelaskan bahwa faktor pertama <b>tidak</b> menyumbang setidaknya 20% dari varians (Retnawati, 2014).  Sehingga, asumsi <b>unidimensi tidak terpenuhi</b> atau butir-butir dalam tes mengukur <b>lebih dari satu laten trait</b>. <b>Solusi: </b> untuk mengatasi kasus ini, anda bisa menggunakan <b>Model IRT Multidimensi</b>."),paste("The Ratio=",round(per,4),"=",round(per,4)*100,"%.","These results explain that the first factor does <b>not</b> account for at least 20% of the variance (Retnawati, 2014). Thus, the <b> Unidimension assumption is Not met</b>  or the items in the test measure <b>More Than One latent trait</b>. <b>Solution: </b> To overcome this case, you can use the Multidimensional IRT model."))}
     return(unidim)  })
 
   observeEvent(input$buttoninfor1, {
@@ -209,10 +218,8 @@ server<-function(input,output,session){
     shinyWidgets::show_alert(title = "",btn_labels = ifelse(input$boso=="in_indonesia","Kembali","Back"),
                              text = tags$span(
                                tags$h4(ifelse(input$boso=="in_indonesia","Estimasi kemampuan","Ability estimation"),style="font-family: 'cursive';color: red; text-align:left "),
-                               tags$h5(ifelse(input$boso=="in_indonesia","a. Kemampuan diestimasi menggunakan metode yang anda pilih pada bagian parameter invriansi","a. The ability is estimated using the method you choose in the Parameter Invariance section."),style="font-family: 'cursive';color: red; text-align:left "),
-                               tags$h4(ifelse(input$boso=="in_indonesia","b. Estimasi kemampuan pada tabel diatas masih menggunakan semua butir","b. The ability in the table above are estimated using all items."),style="font-family: 'cursive';color: blue; text-align:left "),
-                               tags$h4(ifelse(input$boso=="in_indonesia","c. Gunakan fasilitas SCORING, untuk estimasi menggunakan butir butir fit","c. Use the SCORING facility, for estimation using fit items"),style="font-family: 'cursive';color: blue; text-align:left "),
-                               tags$h4(ifelse(input$boso=="in_indonesia","d. Lanjutkan ke ICC,IIC & TIF","d. Continue to ICC, IIC & TIF"),style="font-family: 'cursive';color: red; text-align:left ")),
+                               tags$h4(ifelse(input$boso=="in_indonesia","a. Kemampuan diestimasi menggunakan metode yang anda pilih pada bagian parameter invriansi","a. The ability is estimated using the method you choose in the Parameter Invariance section."),style="font-family: 'cursive';color: red; text-align:left "),
+                               tags$h4(ifelse(input$boso=="in_indonesia","b. Estimasi kemampuan pada tabel diatas masih menggunakan semua butir. sehingga, jika terdapat butir yang tidak fit. maka informasi pada tabel ini tidak dapat digunakan.  untuk melakukan penskoran dengan menggunakan butir yang fit saja anda bisa gunakan package catR","b. The ability in the table above are estimated using all items.so, if there are items that do not fit. then the information in this table cannot be used. To score using only fit items, you can use the catR package"),style="font-family: 'cursive';color: blue; text-align:left ")),
                              html = TRUE,width = "60%")})
 
   observeEvent(input$buttoninfor10, {
@@ -238,7 +245,7 @@ server<-function(input,output,session){
                              html = TRUE,width = "50%")})
 
   output$labelboxtentang<-renderText({  ifelse(input$boso=="in_indonesia","TENTANG PACKAGE","ABOUT THE PACKAGE")})
-  output$ketdeskripsi<-renderText({ifelse(input$boso=="in_indonesia","Analisis butir instrumen dapat dilakukan menggunakan IRT. Banyak Paket atau software yang dapat digunakan untuk analisis IRT, tetapi fitur-fitur yang diberikan hanya cocok untuk para ahli IRT saja. Fitur-fitur pada paket ini sangat cocok jika digunakan  para pemula yang sedang belajar IRT. Keunggulan yang ditawarkan oleh paket ini yaitu (1) mudah digunakan, (2) Petunjuk penggunaan paket, (3 )Paket dapat merekomendasikan model terbaik, (4) Paket dapat memberikan solusi ketika ada asumsi IRT yang tidak sesuai, (5) Paket secara otomatis memberikan interpretasi hasil analisis, (6) Hasil analisis dapat didownload dalam bentuk laporan berekstensi html, dan (7) paket ini dapat digunakan dalam bahasa Inggris atau bahasa Indonesia.","Instrument item analysis can be performed using IRT. Many packages or software can be used for IRT analysis, but the features provided are only suitable for IRT experts. The features in this package are suitable for beginners who are not expert IRT. The advantages offered by this package are (1) User Friendly GUI, (2) Instructions for using the package, (3) The package can recommend the best model, (4) The package can provide solutions when the IRT assumptions are not met, (5) The package automatically provide interpretation of analysis results, (6) Analysis results can be downloaded as a report with an html extension, and (7) Package can be used in English or Indonesian." )})
+  output$ketdeskripsi<-renderText({ifelse(input$boso=="in_indonesia","Analisis data Dichotomous dan polytomous menggunakan model unidimensional Item Response Theory (Chalmers (2012) <doi:10.18637/jss.v048.i06>) dengan Graphical User Interface yang user friendly. Ketika asumsi Items Respons Theory tidak terpenuhi, paket ini mencoba membuat keputusan yang bijak dengan memberikan saran untuk solusi. Asumsi unidimensi mengacu pada (DeMars (2010) <doi:https://doi.org/10.1093/acprof:oso/9780195377033.001.0001>), yang dianalisis menggunakan paket 'psych'. Saran bila asumsi independensi lokal tidak terpenuhi mengacu pada (Nguyen, et al (2014) <doi:10.1007/s40271-013-0041-0>, Paek & Cole (2019) <doi:10.4324/9781351008167>, Petersen ( 2005) <doi:10.1007/s11136-005-1259-7>, Toland (2014) <doi:10.1177/0272431613511332>). Saran yang digunakan pada parameter asumsi invarian mengacu pada (Xu, et al (2020) <doi: 10.3758/s13428-020-01426-z>, Guenole & Brown (2014) <doi:10.3389/fpsyg.2014.00980>). Cocok jika digunakan oleh pemula yang sedang belajar Item Response Theory. Fitur-fitur yang ditawarkan oleh paket ini adalah: (1) Petunjuk untuk melakukan analisis IRT. (2) Memberikan rekomendasi model IRT terbaik. (3) Secara otomatis memberikan interpretasi hasil. (4) Hasil dapat diunduh dalam bentuk laporan dengan ekstensi html. (5) Dapat digunakan dalam bahasa Inggris atau bahasa Indonesi.","Analysis of Dichotomous and polytomous data using unidimensional Item Response Theory model (Chalmers (2012) <doi:10.18637/jss.v048.i06>) with user friendly Graphical User Interface. When Items Respons Theory assumptions are not met, this package tries to make wise decisions by providing suggestions for solutions. The unidimensional assumption refers to(DeMars (2010) <doi:https://doi.org/10.1093/acprof:oso/9780195377033.001.0001>), which is analyzed using the 'psych' package. The suggestions when the local independence assumption is not met refer to (Nguyen, et al (2014) <doi:10.1007/s40271-013-0041-0>, Paek & Cole (2019) <doi:10.4324/9781351008167>, Petersen (2005) <doi:10.1007/s11136-005-1259-7>, Toland (2014) <doi:10.1177/0272431613511332>).The suggestions used on the invariance assumption parameter refer to (Xu, et al (2020) <doi:10.3758/s13428-020-01426-z>, Guenole & Brown (2014) <doi:10.3389/fpsyg.2014.00980>). Suitable if used by beginners who are learning Item Response Theory. The features offered by this package are: (1) Instructions for conducting an IRT analysis. (2) Provide the best IRT model recommendations. (3) Automatically provides interpretation of the results. (4) Results can be downloaded in the form of a report with an html extension. (5) Can be used in English or Indonesian." )})
   output$labelboxstepstep<-renderText({ifelse(input$boso=="in_indonesia","LANGKAH-LANGKAH MENGGUNAKAN PACKAGE","THE STEPS TO USE THIS PACKAGE")})
   output$labelboxinput<-renderText({ifelse(input$boso=="in_indonesia","MENGINPUT DATA DAN MEMILIH MODEL","INPUTTING DATA AND CHOOSING MODEL")})
   output$labelboxdata<-renderText({ifelse(input$boso=="in_indonesia","DATA KAMU","YOUR DATA")})
@@ -788,6 +795,7 @@ server<-function(input,output,session){
     if(tipeitem=="2PL" || tipeitem=="graded" || tipeitem=="gpcm" || tipeitem=="pcm" ){pplot=3}
     if(tipeitem=="3PL"){pplot=4}
     if (tipeitem=="4PL"){pplot=5}
+    old.par<-par(no.readonly = TRUE)
     par(mfrow=c(1,pplot))
     if (tipeitem=="2PL" ||tipeitem=="3PL"||tipeitem=="4PL" ||tipeitem=="graded" || tipeitem=="gpcm" || tipeitem=="pcm"){plot(mdlkelompok1[,1],y=mdlkelompok2[,1], xlab = ifelse(input$boso=="in_indonesia","Grup pertama dari parameter Discriminant","The first group of the Discriminant parameters"), ylab = ifelse(input$boso=="in_indonesia","Grup kedua dari parameter Discriminant","The first group of the discriminant parameters"), main =ifelse(input$boso=="in_indonesia","Invariansi Parameter Discriminant", "The Invariance of Discriminant Parameters"))
       abline(0,1)}
@@ -800,7 +808,11 @@ server<-function(input,output,session){
     if (tipeitem=="4PL" ){plot(mdlkelompok1[,4],y=mdlkelompok2[,4], xlab = ifelse(input$boso=="in_indonesia","Grup pertama dari parameter inattention","The first group of the inattention parameters") , ylab = ifelse(input$boso=="in_indonesia","Grup kedua dari parameter inattention","The second group of the inattention parameters"), main =ifelse(input$boso=="in_indonesia","Invariansi Parameter inattention", "The Invariance of inattention Parameters"))
       abline(0,1)}
     plot(invark1[,1],invark2[,1], xlab =  ifelse(input$boso=="in_indonesia","Grup pertama dari parameter kemampuan","The first group of the ability parameters") , ylab = ifelse(input$boso=="in_indonesia","Grup kedua dari parameter ability","The second group of the ability parameters"), main =ifelse(input$boso=="in_indonesia","Invariansi Parameter Kemampuan", "The Invariance of Ability Parameters"))
-    abline(0,1)  })
+    abline(0,1)
+    par(old.par)
+
+
+    })
 
   invarkondisi1<-reactive({
     mdlkelompok1<-mdlkelompok1()
@@ -1041,8 +1053,8 @@ server<-function(input,output,session){
 
   LIinterpret<-reactive({
     xx<-aaaa()
-    intrpert1a<-paste("Hasil ini mengindikasikan bahwa terjadi <b>kasus dependensi lokal</b> antara dua butir atau lebih, Sehingga Asumsi independensi <b>lokal tidak terpenuhi</b> (Paek & Cole, 2019). Pasangan item yang menyebabkan dependensi lokal dapat dilihat pada tabel <b>Item Cause LD</b>. <b>Kasus ini dapat diatasi</b> dengan memilih salah satu solusi berikut ini:","1) hapus salah satu butir dari setiap pasangan butir yang menyebabkan asumsi ini tidak terpenuhi dan  Lakukan Kaliberasi ulang (Toland, 2014). atau","2)  Anda bisa menggunakan model IRT Non Parameterik (Petersen, 2005). <b>catatan: </b> IRT Non Parametrik tidak disediakan pada Package ini.  atau","3) Abaikan hasil pengujian asumsi independensi lokal ini. Jika dua atau lebih item yang menyebabkan dependensi lokal ini, secara konseptual tidak memiliki keterkaitan konten satu sama lain (Nguyen et al., 2014). atau","4) Abaikan hasil dari Pengujian asumsi Independensi lokal ini. Sesuai pendapat dari (Hambleton et al., 1991; Retnawati, 2016), jika Asumsi Unidimensi terpenuhi, maka secara otomatis asumsi Independesi lokal terpenuhi.",sep ="<br/>")
-    intrpert2a<-paste("These results indicate that there is a <b>case of local dependency</b> between two or more items, and <b>the assumption of local independence is not met</b> (Paek & Cole, 2019). Item pairs that cause local dependencies can be seen in the <b></i>Item Cause LD</b></i> table. <b>It case can be resolved</b> by choosing one of the following methods:","1) remove one item from each item pair which causes this assumption not to be met. Then, recalibrate the test items (Toland, 2014). or","2) You can use the Non-Parametric IRT model (Petersen, 2005). Note: Non-Parametric IRT is not provided in this Package. or","3) Ignore the results of this local independence assumption test. If two or more items cause this local dependency, contextually they are not content related to each other (Nguyen et al., 2014). or","4) Ignore the results of this Local Independence assumption test. In accordance with the opinion of (Hambleton et al., 1991; Retnawati, 2016), if the Unidimensional Assumption is met, then the local independence assumption is automatically met.",sep ="<br/>")
+    intrpert1a<-paste("Hasil ini mengindikasikan bahwa terjadi <b>kasus dependensi lokal</b> antara dua butir atau lebih, Sehingga Asumsi independensi <b>lokal tidak terpenuhi</b> (Paek & Cole, 2019). Pasangan item yang menyebabkan dependensi lokal dapat dilihat pada tabel <b>Item Cause LD</b>. <b>Kasus ini dapat diatasi</b> dengan memilih salah satu solusi berikut ini:","1) hapus salah satu butir dari setiap pasangan butir yang menyebabkan asumsi ini tidak terpenuhi dan  Lakukan Kaliberasi ulang (Toland, 2014). atau","2)  Anda bisa menggunakan model IRT Non Parameterik (Petersen, 2005). <b>catatan: </b> IRT Non Parametrik tidak disediakan pada Package ini.  atau","3) Abaikan hasil pengujian asumsi independensi lokal ini. Jika dua atau lebih item yang menyebabkan dependensi lokal ini, secara konseptual tidak memiliki keterkaitan konten satu sama lain (Nguyen et al., 2014). atau","4) Abaikan hasil dari Pengujian asumsi Independensi lokal ini. Sesuai pendapat dari (Retnawati, 2014), jika Asumsi Unidimensi terpenuhi, maka secara otomatis asumsi Independesi lokal terpenuhi.",sep ="<br/>")
+    intrpert2a<-paste("These results indicate that there is a <b>case of local dependency</b> between two or more items, and <b>the assumption of local independence is not met</b> (Paek & Cole, 2019). Item pairs that cause local dependencies can be seen in the <b></i>Item Cause LD</b></i> table. <b>It case can be resolved</b> by choosing one of the following methods:","1) remove one item from each item pair which causes this assumption not to be met. Then, reanalyze from the first step (Toland, 2014). or","2) You can use the Non-Parametric IRT model (Petersen, 2005). Note: Non-Parametric IRT is not provided in this Package. or","3) Ignore the results of this local independence assumption test. If two or more items cause this local dependency, contextually they are not content related to each other (Nguyen et al., 2014). or","4) Ignore the results of this Local Independence assumption test. In accordance with the opinion of (Retnawati, 2014), if the Unidimensional Assumption is met, then the local independence assumption is automatically met.",sep ="<br/>")
     if (max(abs(xx[,1]))>0.174 && mdl()=="LD"){intrpert<-ifelse(input$boso=="in_indonesia",intrpert1a,intrpert2a)}
     if (max(abs(xx[,1]))<=0.174 && mdl()=="LD"){
       intrpert3a<-paste("Hasil ini menjelaskan bahwa Asumsi <b>Independensi Lokal Terpenuhi</b> (Paek & Cole, 2019). Hasil tersebut dapat dibutkitkan dengan melihat nilai maksimum absolut dari matriks LD  < 0.174 pada tabel <b>Item Cause LD. </b>")
