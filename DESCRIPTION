@@ -1,7 +1,7 @@
 Package: irtawsi
 Type: Package
 Title: Items Response Theory Analysis with Steps and Interpretation
-Version: 0.3.4
+Version: 0.4.0
 Authors@R: c(
     person("Hari Purnomo", "Susanto", , "haripurnomosusanto@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5376-1597")),
@@ -10,12 +10,15 @@ Authors@R: c(
     person("Agus Maman", "Abadi", , "agusmaman@uny.ac.id", role = c("ctb"),
            comment = c(ORCID = "0000-0002-5488-3043")),
     person("Haryanto", "Haryanto", , "haryanto@uny.ac.id", role = c("ctb"),
-          comment = c(ORCID = "0000-0003-3322-904x")),
-    person("Raden Muhammad", "Ali", , "raden.ali@pbi.uad.ac.id", role = c("ctb"),
- 	comment = c(ORCID = "0000-0001-7058-5575")))
+          comment = c(ORCID = "0000-0003-3322-904X")),
+    person("Hasan", "Djidu", , "hasandjidu@usn.ac.id", role = c("ctb"),
+          comment = c(ORCID = "0000-0003-1110-6815")))
 Maintainer: Hari Purnomo Susanto <haripurnomosusanto@gmail.com>
-Description: Analysis of Dichotomous and polytomous data using unidimensional Item Response Theory model (Chalmers (2012) <doi:10.18637/jss.v048.i06>) with user friendly Graphical User Interface. Suitable for  beginners who are learning Item Response Theory.
-Imports: DT, mirt, psych, readxl,shiny,shinyWidgets,shinycssloaders,rmarkdown,bs4Dash,gt,diagram
+Description: Dichotomous and polytomous data analysis and their scoring using the unidimensional Item Response Theory model (Chalmers (2012) <doi:10.18637/jss.v048.i06>) with user-friendly graphic User Interface. Suitable for beginners who are learning item response theory.
+Imports: DT, mirt, psych,
+        readxl,shiny,shinyWidgets,shinycssloaders,rmarkdown,bs4Dash,gt,diagram,writexl,mirtCAT,WrightMap
 License: GPL (>= 3)
 Encoding: UTF-8
 NeedsCompilation: no
+URL: https://github.com/SusantoHP/irtawsi
+BugReports: https://github.com/SusantoHP/irtawsi/issues
