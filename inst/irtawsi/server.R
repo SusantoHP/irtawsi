@@ -36,7 +36,7 @@ server<-function(input,output,session){
     textrect(elpos[12,], 0.15, 0.05, lab = step5a,box.col = "grey",shadow.col = "red", shadow.size = 0.005, cex = 1.5)
 
     par(old.par)
-    })
+  })
 
 
 
@@ -46,6 +46,7 @@ server<-function(input,output,session){
   observeEvent(input$assumptionprove, {updateTabItems(session, "inTabset", selected = 'h4')})
   observeEvent(input$parameterokk, {updateTabItems(session, "inTabset", selected = 'h5')})
   observeEvent(input$ploticciic, {updateTabItems(session, "inTabset", selected = 'h6')})
+  observeEvent(input$penskoran, {updateTabItems(session, "inTabset", selected = 'h7')})
 
 
   hps1<- reactive({
@@ -98,8 +99,8 @@ server<-function(input,output,session){
       text(x = 0.5, y = 0.75,ifelse(input$boso=="in_indonesia", "Maaf, data sample Anda tidak mencukupi","Sorry, your sample data is not enough"),cex = 6,col="red",  font=2, adj=0.5)
       text(x = 0.5, y = 0.25,ifelse(input$boso=="in_indonesia", "Silakan tambahkan data sample anda ","Please add your sample data"),cex = 5,col="blue",  font=2, adj=0.5)
       par(old.par)
-      }
-    })
+    }
+  })
 
   kesimunidim<-reactive({
     kmo<-kmook1()
@@ -245,7 +246,7 @@ server<-function(input,output,session){
                              html = TRUE,width = "50%")})
 
   output$labelboxtentang<-renderText({  ifelse(input$boso=="in_indonesia","TENTANG PACKAGE","ABOUT THE PACKAGE")})
-  output$ketdeskripsi<-renderText({ifelse(input$boso=="in_indonesia","Analisis data Dichotomous dan polytomous menggunakan model unidimensional Item Response Theory (Chalmers (2012) <doi:10.18637/jss.v048.i06>) dengan Graphical User Interface yang user friendly.  Cocok jika digunakan oleh pemula yang sedang belajar Item Response Theory.","Analysis of Dichotomous and polytomous data using unidimensional Item Response Theory model (Chalmers (2012) <doi:10.18637/jss.v048.i06>) with user friendly Graphical User Interface. Suitable for  beginners who are learning Item Response Theory." )})
+  output$ketdeskripsi<-renderText({ifelse(input$boso=="in_indonesia","Analisis data Dichotomous dan polytomous beserta penskorannya menggunakan model unidimensional Item Response Theory (Chalmers (2012) <doi:10.18637/jss.v048.i06>) dengan Graphical User Interface yang user friendly.  Cocok jika digunakan oleh pemula yang sedang belajar Item Response Theory.","Dichotomous and polytomous data analysis and their scoring using the unidimensional Item Response Theory model (Chalmers (2012) <doi:10.18637/jss.v048.i06>) with user-friendly Graphical User Interface. Suitable for  beginners who are learning Item Response Theory." )})
   output$labelboxstepstep<-renderText({ifelse(input$boso=="in_indonesia","LANGKAH-LANGKAH MENGGUNAKAN PACKAGE","THE STEPS TO USE THIS PACKAGE")})
   output$labelboxinput<-renderText({ifelse(input$boso=="in_indonesia","MENGINPUT DATA DAN MEMILIH MODEL","INPUTTING DATA AND CHOOSING MODEL")})
   output$labelboxdata<-renderText({ifelse(input$boso=="in_indonesia","DATA KAMU","YOUR DATA")})
@@ -812,7 +813,7 @@ server<-function(input,output,session){
     par(old.par)
 
 
-    })
+  })
 
   invarkondisi1<-reactive({
     mdlkelompok1<-mdlkelompok1()
@@ -1260,5 +1261,316 @@ server<-function(input,output,session){
   output$downloadReport = downloadHandler(filename = "report.html",content = function(file){render("report.Rmd", output_format =html_document(), output_file = file,   quiet = TRUE)})
 
 
+  #####################################SCORING##################
+  output$onepl<-renderTable({
+    b<-c("b",-1, 0.5, 0.6, -0.5,1.6,1.7,1.9,2,1.9,2.5 ,"...")
+    b1<-rep("",12)
+    b2<-rep("",12)
+    b3<-rep("",12)
+    bb1<-data.frame(b,b1,b2,b3)
+    colnames(bb1)<-c("A","B","C","D")
+    row.names(bb1)<-c(paste(1:length(b)))
+    bb1
+  },rownames = T,colnames = T,align = "c",bordered = T,width = "15%")
+  output$twopl<-renderTable({
+    a<-c("a",0.5, 1.5, 1.6, 0.7,0.6,1.3,1.5,2.1,1.7,1.2 ,"")
+    a1<-c("b",-1, 0.5, 0.6, -0.5,1.6,1.7,1.9,2,1.9,2.5 ,"")
+    a2<-rep("",12)
+    a3<-rep("",12)
+    aa1<-data.frame(a,a1,a2,a3)
+    colnames(aa1)<-c("A","B","C","D")
+    row.names(aa1)<-c(paste(1:length(a)))
+    aa1
+  },rownames = T,colnames = T,align = "c",bordered = T,width = "15%")
+  output$threepl<-renderTable({
+    c<-c("a",0.5, 1.5, 1.6, 0.7,0.6,1.3,1.5,2.1,1.7,1.2 ,"")
+    c1<-c("b",-1, 0.5, 0.6, -0.5,1.6,1.7,1.9,2,1.9,2.5 ,"")
+    c2<-c("g",0.1, 0.2, 0.12, 0.3,0.6,0.1,0.15,0.17,0.14,0.15 ,"")
+    c3<-rep("",12)
+    c4<-rep("",12)
+    cc1<-data.frame(c,c1,c2,c3,c4)
+    colnames(cc1)<-c("A","B","C","D","E")
+    row.names(cc1)<-c(paste(1:length(c)))
+    cc1
+  },rownames = T,colnames = T,align = "c",bordered = T,width = "15%")
+  output$fourpl<-renderTable({
+    d<-c("a",0.5, 1.5, 1.6, 0.7,0.6,1.3,1.5,2.1,1.7,1.2 ,"")
+    d1<-c("b",-1, 0.5, 0.6, -0.5,1.6,1.7,1.9,2,1.9,2.5 ,"")
+    d2<-c("g",0.1, 0.2, 0.12, 0.3,0.6,0.1,0.15,0.17,0.14,0.15 ,"")
+    d3<-c("u",0.9, 0.8, 0.98, 0.87,0.86,0.99,0.78,0.7,0.78,0.75 ,"")
+    d4<-rep("",12)
+    d5<-rep("",12)
+    dd1<-data.frame(d,d1,d2,d3,d4,d5)
+    colnames(dd1)<-c("A","B","C","D","E","F")
+    row.names(dd1)<-c(paste(1:length(d)))
+    dd1
+  },rownames = T,colnames = T,align = "c",bordered = T,width = "15%")
+  output$poli<-renderTable({
+    p<-c("a",0.5, 1.5, 1.6, 0.7,0.6,1.3,1.5,2.1,1.7,1.2 ,"")
+    p1<-c("b1",1, 1.2, 1.12, 1.3,2.6,2.1,3.15,2.17,1.14,1.15 ,"")
+    p2<-c("b2",0, 0.5, 0.12, 0.3,0.6,0.1,0.15,0.17,0.14,0.15 ,"")
+    p3<-c("b3",-1, -0.5, -0.6, -0.5,-1.6,-1.7,-1.9,-2,-1.9,-2.5 ,"")
+    p4<-rep("",12)
+    p5<-rep("",12)
+    pp1<-data.frame(p,p1,p2,p3,p4,p5)
+    colnames(pp1)<-c("A","B","C","D","E","F")
+    row.names(pp1)<-c(paste(1:length(p)))
+    pp1
+  },rownames = T,colnames = T,align = "c",bordered = T,width = "15%")
+  output$dikodata<-renderTable({
+    p<-matrix(c("x1",1,0,1,1,1,1,0,1,0,0,0,0,0,0,0,"","","x2",0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,"","","x3",1,0,0,0,1,0,1,1,0,1,1,1,0,0,1,"","","x4",0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,"","","x5",0,1,0,0,1,0,0,0,1,1,0,0,1,1,0,"","","x6",0,1,1,1,0,1,0,0,0,0,0,1,0,0,1,"","","x7",1,0,1,0,1,0,0,1,0,0,1,1,1,1,1,"","","x8",1,0,1,0,1,0,0,1,0,1,0,0,1,1,0,"","","x9",1,1,0,1,0,0,0,0,1,0,1,1,1,0,0,"","","x10",0,1,1,0,1,1,1,0,0,1,1,0,1,0,1,"","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""
+    ),18,12)
+
+    pp1<-data.frame(p)
+    colnames(pp1)<-c("A","B","C","D","E","F","G","H","I","J","K","L")
+    row.names(pp1)<-c(paste(1:18))
+    pp1
+  },rownames = T,colnames = T,align = "c",bordered = T,width = "15%")
+
+  output$polidata<-renderTable({
+    p<-matrix(c("x1",1,2,1,3,4,4,1,2,1,4,1,2,1,2,2,"","","x2",4,2,1,2,3,1,1,1,2,3,1,3,1,2,1,"","","x3",2,4,3,2,2,1,1,2,1,4,3,3,4,4,1,"","","x4",3,4,3,4,3,4,2,1,3,4,1,4,4,1,2,"","","x5",3,1,3,4,2,2,3,1,2,2,4,3,4,1,2,"","","x6",4,1,2,3,4,2,2,3,1,4,3,2,2,4,4,"","","x7",4,2,2,4,3,1,4,4,1,2,3,4,3,1,3,"","","x8",1,4,3,3,1,3,1,1,2,4,3,3,4,1,4,"","","x9",1,2,1,3,4,2,1,1,1,3,1,4,2,1,2,"","","x10",1,1,2,2,3,1,1,1,3,2,2,2,2,1,3,"","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""),18,12)
+
+    pp1<-data.frame(p)
+    colnames(pp1)<-c("A","B","C","D","E","F","G","H","I","J","K","L")
+    row.names(pp1)<-c(paste(1:18))
+    pp1
+  },rownames = T,colnames = T,align = "c",bordered = T,width = "15%")
+
+  ############################SKORING######################
+  output$bataskorteta<-renderText({
+    batas<-input$batastetaskor
+    return(paste0("(-",batas,",",batas,")"))
+  })
+  hpsbaru<- reactive({
+    ambildataku1<- input$ambildatabaru
+    if(is.null(ambildataku1)) return(NULL)
+
+    dataset<- read_xlsx(ambildataku1$datapath, sheet=1)
+    p<-dataset
+
+    return(p)
+  })
+
+  hpspar<- reactive({
+    ambildataku2<- input$ambildatapari
+    if(is.null(ambildataku2))
+      return(NULL)
+
+    dataset<- read_xlsx(ambildataku2$datapath, sheet=1)
+
+    p<-dataset
+
+
+    return(round(p,3))
+  })
+  modelskor<-reactive({
+    if(input$pilihkelasskor=="Dichotomous"){
+
+      mdlskor1<-input$pilihmodelskor0
+      if(input$pilihmodelskor0=="Rasch"){
+        mdlskor1<-"2PL"
+      }
+
+    }
+    if(input$pilihkelasskor=="Polytomous"){
+      if(input$pilihmodelskor=="GRM"){
+        mdlskor1<-'graded'
+      }
+      if(input$pilihmodelskor=="GPCM" || input$pilihmodelskor=="PCM"){
+        mdlskor1<-'gpcm'
+
+      }
+    }
+    return(mdlskor1)
+  })
+
+  modelbaru<-reactive({
+
+
+
+    ###data Parameterik butir yang sudah di kalibrasi UNTUK YANG POLITOMUS YANG SUDAH DIBAIK PARAMETERPOLI3
+    pars<-  hpspar()
+    ### data pola respon siswa yang di estimasi skornya
+    pola<-hpsbaru()
+    ### Ganti sesuai dengan jenis data "dico" untuk dikotomus, "poli" untuk politomus
+    data<-input$pilihkelasskor
+
+    #milih model otomatis
+    if (data=="Dichotomous"){
+      if (ncol(pars)==1) {
+        a1=rep(1,nrow(pars))
+        d=as.numeric(unlist(pars[1]))
+        g=rep(0,nrow(pars))
+        u=rep(1,nrow(pars))
+        parsok<-data.frame(a1,d,g,u)
+        model<-"Rasch"
+      } else if (ncol(pars)==2) {
+        a1=as.numeric(unlist(pars[1]))
+        d=as.numeric(unlist(pars[2]))
+        g=rep(0,nrow(pars))
+        u=rep(1,nrow(pars))
+        parsok<-data.frame(a1,d,g,u)
+        model<-"2PL"
+      } else  if(ncol(pars)==3){
+        a1=as.numeric(unlist(pars[1]))
+        d=as.numeric(unlist(pars[2]))
+        g=as.numeric(unlist(pars[3]))
+        u=rep(1,nrow(pars))
+        parsok<-data.frame(a1,d,g,u)
+        model<-"3PL"
+      }else  {
+        a1=as.numeric(unlist(pars[1]))
+        d=as.numeric(unlist(pars[2]))
+        g=as.numeric(unlist(pars[3]))
+        u=as.numeric(unlist(pars[4]))
+        parsok<-data.frame(a1,d,g,u)
+        model<-"4PL"
+      }
+    }
+    if (data=="Polytomous"){
+      if(input$pilihmodelskor=="GRM"){
+        model<-"graded"
+      }
+      else{
+        model<-"gpcm"
+      }
+      model=model
+      parsok<-pars
+      colnames(parsok) <- c('a1', paste0('d', 1:(ncol(pars)-1)))
+
+    }
+
+
+    mod <- generate.mirt_object(parsok, itemtype = model)
+
+    skor<-skor1<-eror<-c()
+    for (i in 1:nrow(pola)){
+      skorok<- fscores(mod, response.pattern = as.numeric(pola[i,]),theta_lim = c(-input$batastetaskor,input$batastetaskor),method = input$pilihestimatelskor)
+      skor<-c(skor,skorok[1])
+      # skor1<-c(skor1,((skorok[1]+batas)/(2*batas))*100) # skor berdasarkan batas yang sebenarnya
+      eror<-c(eror,skorok[2])
+    }
+    #skor berdsarkan skor minimum dan maksimum. (skor ini dilakukan untuk menghindarkan siswa merasa tidak bersalah)
+    if(input$batasats>=abs(input$batasbwh)){
+      skor100<-((input$batasats+skor)/(input$batasats-input$batasbwh))*100
+    }
+    if(abs(input$batasbwh)>=input$batasats){
+      skor100<-((abs(input$batasbwh)+skor)/(input$batasats-input$batasbwh))*100
+    }
+
+    hasil<-data.frame(round(skor,3),round(eror,3),round(skor100,3))
+    colnames(hasil)<-c("Theta_IRT", "Error","Theta_0-100")
+    return(hasil)
+
+  })
+
+
+
+  ###########OUTPUT SCORING##################
+  output$tampildataparskor<-DT::renderDT({
+    # as.data.frame( coef(modelbaru(), simplify=TRUE, IRTpars=TRUE)$items)
+    tryCatch(expr = {
+
+      DT::datatable(t(hpspar()), caption = "", rownames =T,
+                    options = list(autoWidth = T, scrollX = TRUE,
+                                   columnDefs = list(list(width = '100px', targets = 1)),
+                                   paging = FALSE, searching = FALSE), selection='none')
+    },error = function(e){NULL})
+  })
+  output$tampildataskor<-DT::renderDT({
+    tryCatch(expr = {
+
+      DT::datatable(hpsbaru(), caption = "", rownames =T,
+                    options = list(autoWidth = T, scrollX = TRUE,pageLength = 4,
+                                   columnDefs = list(list(width = '100px', targets = 1)),
+                                   paging = TRUE, searching = FALSE), selection='none')
+    },error = function(e){NULL})
+  })
+  output$tampilskor<-DT::renderDT({
+
+
+    if(input$analisis1==0) {return()}
+    if (input$analisis1!=0){
+      modelbaru<-modelbaru()
+      skoring<-t( modelbaru[1])
+      DT::datatable(round(skoring,3), caption = "", rownames =T,
+                    options = list(autoWidth = T, scrollX = TRUE,pageLength = 4,
+                                   columnDefs = list(list(width = '100px', targets = 1)),
+                                   paging = TRUE, searching = FALSE), selection='none')
+    }
+  })
+
+  skorideal<-reactive({
+    skorideal<-modelbaru()
+    skorideal<-skorideal[3]
+    return(round(skorideal,3))
+  })
+  output$tampilskor100<-DT::renderDT({
+
+    if(input$analisis1==0) {return()}
+    if (input$analisis1!=0){
+      DT::datatable(t(skorideal()), caption = "", rownames =T,
+                    options = list(autoWidth = T, scrollX = TRUE,pageLength = 4,
+                                   columnDefs = list(list(width = '100px', targets = 1)),
+                                   paging = TRUE, searching = FALSE), selection='none')
+    }
+  })
+  output$histogramirt<-renderPlot({
+    if(input$analisis1==0) {return()}
+    if (input$analisis1!=0){
+      hist(as.numeric(unlist(modelbaru()[1])),main="Histogram Of Theta",xlab="IRT Scor")
+    }
+  })
+
+  output$histogramideal<-renderPlot({
+    if(input$analisis1==0) {return()}
+    if (input$analisis1!=0){
+      hist(as.numeric(unlist(skorideal())),main="Histogram Of 100 Range Theta",xlab="100 Range Scor")
+    }
+  })
+  nomor<-reactiveVal(1)
+  observeEvent(input$kembali,{nomor1<-nomor()-1
+  nomor(nomor1)
+  })
+  observeEvent(input$lanjut,{nomor1<-nomor()+1
+  nomor(nomor1)
+  })
+  output$mapskor<-renderPlot({
+    xrespon<-as.matrix(hpsbaru())
+    xresponok<-xrespon[nomor(),]
+    # halo<-ifelse(input$pilihkelasskor=="Polytomous" && xresponok==1, "green","red")
+    halo<-ifelse(input$pilihkelasskor=="Dichotomous" && xresponok==1, "green","red")
+    itemModern(xresponok,yRange = c(input$batasbwh,input$batasats),show.axis.logits = "L",cex=3,thr.sym.lwd = 10,thr.lab.font = 5,thr.sym.col.fg = halo)
+    mtext("Wright Map-Student Respons", side = 3, font = 3, line = 1)
+  })
+  output$nama<-renderText({
+    if(nomor()<1 || nomor()> nrow(modelbaru()))return("No Data to Show")
+    paste0("Respondent-",nomor())
+  })
+  output$skorirtsiswa<-renderText({
+    if(nomor()<1 || nomor()> nrow(modelbaru()))return("No Data to Show")
+    modelbaru<-modelbaru()
+    modelbaru1<-as.numeric(unlist(modelbaru[1]))
+    paste("Theta-IRT Score:",modelbaru1[nomor()])
+  })
+  output$skoridealsiswa<-renderText({
+    if(nomor()<1 || nomor()> nrow(modelbaru()))return("No Data to Show")
+    skorideal<-as.numeric(unlist(skorideal()))
+
+    paste("Theta-100 Score:", skorideal[nomor()])
+  })
+
+  output$skordownload <- downloadHandler(
+
+    filename = function() {
+      paste("Convert_Score.xlsx")
+    },
+    content = function(file) {
+
+      write_xlsx( modelbaru(),file)
+
+    }
+
+  )
 }
 

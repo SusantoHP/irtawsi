@@ -9,8 +9,11 @@ install.packages("irtawsi")
 devtools::install_github("SusantoHP/irtawsi")
 
 ## Usage
-first mehtod
+a.first mehtod
 irtawsi::irtawsi()
-second method
+b.second method
 Library(irtawsi)
-irtawsi
+irtawsi()
+
+## How to use Irtawsi for analysis?
+Each command for analysis can be viewed on each UI layer by pressing the steps button.

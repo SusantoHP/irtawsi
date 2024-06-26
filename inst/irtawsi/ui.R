@@ -6,6 +6,9 @@ library(readxl)
 library(gt)
 library(rmarkdown)
 library(diagram)
+library(WrightMap)
+library(mirtCAT)
+library(writexl)
 
 
 ui<-dashboardPage(
@@ -13,9 +16,11 @@ ui<-dashboardPage(
                   shinyWidgets::actionBttn(inputId = "inputdataok",label = "INPUT YOUR DATA",style = "fill",color = "primary",size = "sm",block = TRUE,no_outline = FALSE),h3("|"),
                   shinyWidgets::actionBttn(inputId = "fitingmodel",label = "FINDING FIT MODEL",style = "fill",color = "primary",size = "sm",block = TRUE,no_outline = FALSE),h3("|"),
                   shinyWidgets::actionBttn(inputId = "assumptionprove",label = "IRT ASSUMPTION ",style = "fill",color = "primary",size = "sm",block = TRUE,no_outline = FALSE),h3("|"),
-                  shinyWidgets::actionBttn(inputId = "parameterokk",label = "ITEM AND ABILITY ",style = "fill",color = "primary",size = "sm",block = TRUE,no_outline = FALSE),h3("|"),
-                  shinyWidgets::actionBttn(inputId = "ploticciic",label = "ICC,IIC & TIC",style = "fill",color = "primary",size = "sm",block = TRUE,no_outline = FALSE),h3("|")),
-  dashboardSidebar( disable =F, collapsed = F,width = 0,sidebarMenu(id="inTabset",menuItem("MANUAL BOOK",tabName = "h1"),br(),menuItem("INPUT YOUR DATA",tabName = "h2"),br(),menuItem("FINDING FIT MODEL)",tabName = "h3"),br(),menuItem("IRT ASSUMPTION ",tabName = "h4"),br(),menuItem("ITEM & PERSON PARAMETER",tabName = "h5"),br(),menuItem("ICC, IIC & TIC",tabName = "h6"),br(),menuItem("SCORING USING IRT",tabName = "h7"))),
+                  shinyWidgets::actionBttn(inputId = "parameterokk",label = "ITEM PARAMETER ",style = "fill",color = "primary",size = "sm",block = TRUE,no_outline = FALSE),h3("|"),
+                  shinyWidgets::actionBttn(inputId = "ploticciic",label = "ICC,IIC & TIC",style = "fill",color = "primary",size = "sm",block = TRUE,no_outline = FALSE),h3("|"),
+                  shinyWidgets::actionBttn(inputId = "penskoran",label = "THETA SCORING",style = "fill",color = "primary",size = "sm",block = TRUE,no_outline = FALSE),h3("|")
+  ),
+  dashboardSidebar( disable =F, collapsed = F,width = 0,sidebarMenu(id="inTabset",menuItem("MANUAL BOOK",tabName = "h1"),br(),menuItem("INPUT YOUR DATA",tabName = "h2"),br(),menuItem("FINDING FIT MODEL)",tabName = "h3"),br(),menuItem("IRT ASSUMPTION ",tabName = "h4"),br(),menuItem("ITEM & PERSON PARAMETER",tabName = "h5"),br(),menuItem("ICC, IIC & TIC",tabName = "h6"),br(),menuItem("THETA SCORING",tabName = "h7"))),
   dashboardBody(tabItems(
 
 
@@ -24,7 +29,7 @@ ui<-dashboardPage(
               h4("IRT Analysis With Steps and Interpretation (irtawsi)", style="  font-family: 'cursive';color: blue;   text-align:center "),hr(),width = 12,
               fluidRow(column("",width = 4),column(width = 4,align="center",
                                                    shinyWidgets::radioGroupButtons(checkIcon = list( yes = icon("square-check"),no = icon("square")),inputId = "boso",label = h4("CHOOSE  LANGUAGE", style="  font-family: 'cursive';color: red; align:center "),choices = c("in_English","in_indonesia"),status = "primary",justified = T,direction = "horizontal",individual = T,size = "lg")),column("",width = 4)),hr(),
-              fluidRow(box(title = h5(textOutput("labelboxtentang"),style="text-align:center"),closable = FALSE,enable_label = TRUE,label_status = "danger",background = "navy",status = "primary",solidHeader = TRUE,collapsible = F,h5("PACKAGE NAME : irtawsi"),hr(),h5("DESCRIPTION  :"),h5(textOutput("ketdeskripsi")),hr(),h5("AUTHORS  :"),h5("1.Hari Purnomo Susanto, 2.Heri Retnawati,3.Agus Maman Abadi, 4.Haryanto, 5. Raden Muhammad Ali"),h5("AVAILABLE: English and Indonesia Language Interpretation,"),h5("IMPORTS:"),h5("shiny,bs4Dash,shinycssloaders, mirt, readxl, gt, DT,psyc, rmarkdown, and diagram."),h5("LICENCE  : GPL (>= 3)"),h5("ENCODING : UTF-8"),h5("LAZYDATA : true"),h5("NEEDCOMPILATOIN: No"),width = 6),
+              fluidRow(box(title = h5(textOutput("labelboxtentang"),style="text-align:center"),closable = FALSE,enable_label = TRUE,label_status = "danger",background = "navy",status = "primary",solidHeader = TRUE,collapsible = F,h5("PACKAGE NAME : irtawsi"),hr(),h5("DESCRIPTION  :"),h5(textOutput("ketdeskripsi")),hr(),h5("AUTHORS  :"),h5("1.Hari Purnomo Susanto, 2.Heri Retnawati,3.Agus Maman Abadi, 4.Haryanto, 5. Raden Muhammad ALI, 6. Hasan Djidu"),h5("AVAILABLE: English and Indonesia Language Interpretation,"),h5("IMPORTS:"),h5("shiny,bs4Dash,shinycssloaders, mirt, readxl, gt, DT,psyc, rmarkdown, diagram, mirtCAT, writexl, and WrightMap."),h5("LICENCE  : GPL (>= 3)"),h5("ENCODING : UTF-8"),h5("LAZYDATA : true"),h5("NEEDCOMPILATOIN: No"),width = 6),
                        box(title = h5(textOutput("labelboxstepstep"),style="text-align:center"),closable = FALSE,enable_label = TRUE,label_status = "danger",background = "navy",status = "primary",solidHeader = TRUE,collapsible = F,
                            plotOutput("flowchart",height = "600px"),width = 6)))),
     tabItem(tabName = "h2",
@@ -260,78 +265,80 @@ ui<-dashboardPage(
                                                                             individual = T,size = "sm")),
                                      actionButton("buttoninfor7","Step 3d",icon =  icon("walking")))),width = 12)),
     tabItem(tabName = "h5",
-            tabBox(title = "",id = "tabset1",
-                   tabPanel(textOutput("labeltabitempar"),
-                            fluidRow(
-                              box(width = 3,
-                                  title = textOutput("labelboxcatego"),
-                                  closable = FALSE,
-                                  enable_label = TRUE,
-                                  status = "danger",
-                                  solidHeader = TRUE,
-                                  collapsible = FALSE,
-                                  conditionalPanel(condition = "input.penentu=='3PL' ||  input.penentu=='4PL' || input.penentu=='2PL'  || input.penentu=='GRM'  || input.penentu=='GPCM' || input.penentu=='PCM' ",
-                                                   h5("DISCRIMINANT"),
-                                                   fluidRow(
-                                                     numericInput(inputId="lowflagdis",
-                                                                  label="LoDiscr",
-                                                                  value=NULL,
-                                                                  width = "50%",
-                                                                  min = 0,
-                                                                  max = 1,
-                                                                  step = 0.1),
-                                                     numericInput(inputId="highflagdis",
-                                                                  label="UpDiscr",
-                                                                  value=NULL,
-                                                                  width = "50%",
-                                                                  min = 1,max = 2,
-                                                                  step = 0.1))),hr(),
-                                  h5("DIFFICULTY"),
-                                  fluidRow(
-                                    numericInput(inputId="easyflagdif",
-                                                 label="LoDifficulty",
-                                                 value=NULL,
-                                                 width = "50%",
-                                                 min = -4,
-                                                 max = 0,
-                                                 step = 0.1),
-                                    numericInput(inputId="hardflagdif",
-                                                 label="UpDifficulty",
-                                                 value=NULL,
-                                                 width = "50%",
-                                                 min = 0,
-                                                 max = 4,step = 0.1)),hr(),
-                                  conditionalPanel(condition = "input.penentu=='3PL' || input.penentu=='4PL'",
-                                                   h5("PSEUDO GUESSING"),
-                                                   fluidRow(
-                                                     numericInput(inputId="lowflaggues",
-                                                                  label="LoGuessing",
-                                                                  value=NULL,
-                                                                  width = "50%",
-                                                                  min = 0,
-                                                                  max = 1,
-                                                                  step = 0.1),
-                                                     numericInput(inputId="highflaggues",
-                                                                  label="UpGuessing",
-                                                                  value=NULL,
-                                                                  width = "50%",
-                                                                  min = 0,
-                                                                  max = 1,
-                                                                  step = 0.1))),
-                                  footer = actionButton("buttoninfor8","Step 4",icon =  icon("walking"))),
-                              box(
-                                title =textOutput("labelboxbutir"),
-                                closable = FALSE,
-                                enable_label = TRUE,
-                                status = "danger",
-                                solidHeader = TRUE,
-                                collapsible = FALSE,
-                                DT::DTOutput("modelparam"),
-                                uiOutput("fititemok") ,width=9))),
-                   tabPanel(textOutput("labeltabsyaabipar"),
-                            fluidRow(
-                              box(width = 3,title = textOutput("labelcategoability"),closable = FALSE,enable_label = TRUE,status = "danger",solidHeader = TRUE,collapsible = FALSE,fluidRow(numericInput(inputId="lowflagabil",label="LoAbility",value=NULL,width = "180px",min = -4,max = 0,step = 0.1),numericInput(inputId="highflagabil",label="UpAbility",value=NULL,width = "180px",min = 0,max = 4,step = 0.1))),
-                              box(title = textOutput("labelmodelabliti"),closable = FALSE,enable_label = TRUE,status = "danger",solidHeader = TRUE,collapsible = FALSE,DT::DTOutput("modelabliti"),width = 9,footer = actionButton("buttoninfor9","Information",icon =  icon("info-circle"))))),width = 12)),
+            # tabBox(title = "",id = "tabset1",
+            # tabPanel(textOutput("labeltabitempar"),
+            fluidRow(
+              box(width = 3,
+                  title = textOutput("labelboxcatego"),
+                  closable = FALSE,
+                  enable_label = TRUE,
+                  status = "danger",
+                  solidHeader = TRUE,
+                  collapsible = FALSE,
+                  conditionalPanel(condition = "input.penentu=='3PL' ||  input.penentu=='4PL' || input.penentu=='2PL'  || input.penentu=='GRM'  || input.penentu=='GPCM' || input.penentu=='PCM' ",
+                                   h5("DISCRIMINANT"),
+                                   fluidRow(
+                                     numericInput(inputId="lowflagdis",
+                                                  label="LoDiscr",
+                                                  value=NULL,
+                                                  width = "50%",
+                                                  min = 0,
+                                                  max = 1,
+                                                  step = 0.1),
+                                     numericInput(inputId="highflagdis",
+                                                  label="UpDiscr",
+                                                  value=NULL,
+                                                  width = "50%",
+                                                  min = 1,max = 2,
+                                                  step = 0.1))),hr(),
+                  h5("DIFFICULTY"),
+                  fluidRow(
+                    numericInput(inputId="easyflagdif",
+                                 label="LoDifficulty",
+                                 value=NULL,
+                                 width = "50%",
+                                 min = -4,
+                                 max = 0,
+                                 step = 0.1),
+                    numericInput(inputId="hardflagdif",
+                                 label="UpDifficulty",
+                                 value=NULL,
+                                 width = "50%",
+                                 min = 0,
+                                 max = 4,step = 0.1)),hr(),
+                  conditionalPanel(condition = "input.penentu=='3PL' || input.penentu=='4PL'",
+                                   h5("PSEUDO GUESSING"),
+                                   fluidRow(
+                                     numericInput(inputId="lowflaggues",
+                                                  label="LoGuessing",
+                                                  value=NULL,
+                                                  width = "50%",
+                                                  min = 0,
+                                                  max = 1,
+                                                  step = 0.1),
+                                     numericInput(inputId="highflaggues",
+                                                  label="UpGuessing",
+                                                  value=NULL,
+                                                  width = "50%",
+                                                  min = 0,
+                                                  max = 1,
+                                                  step = 0.1))),
+                  footer = actionButton("buttoninfor8","Step 4",icon =  icon("walking"))),
+              box(
+                title =textOutput("labelboxbutir"),
+                closable = FALSE,
+                enable_label = TRUE,
+                status = "danger",
+                solidHeader = TRUE,
+                collapsible = FALSE,
+                DT::DTOutput("modelparam"),
+                uiOutput("fititemok") ,width=9))
+            # ),
+            # tabPanel(textOutput("labeltabsyaabipar"),
+            #          fluidRow(
+            #            box(width = 3,title = textOutput("labelcategoability"),closable = FALSE,enable_label = TRUE,status = "danger",solidHeader = TRUE,collapsible = FALSE,fluidRow(numericInput(inputId="lowflagabil",label="LoAbility",value=NULL,width = "180px",min = -4,max = 0,step = 0.1),numericInput(inputId="highflagabil",label="UpAbility",value=NULL,width = "180px",min = 0,max = 4,step = 0.1))),
+            #            box(title = textOutput("labelmodelabliti"),closable = FALSE,enable_label = TRUE,status = "danger",solidHeader = TRUE,collapsible = FALSE,DT::DTOutput("modelabliti"),width = 9,footer = actionButton("buttoninfor9","Information",icon =  icon("info-circle"))))),width = 12)
+    ),
 
     tabItem(tabName = "h6",
             tabBox(title = "",id = "tabset1",
@@ -343,7 +350,262 @@ ui<-dashboardPage(
                             column(5, offset=4,actionButton("left1","PREVIOUS",width=300,icon=icon("arrow-left"),class = "btn-success"),actionButton("right1","NEXT",width=300,icon=icon("arrow-right"),class = "btn-success")),actionButton("buttoninfor11","Step 5b",icon =  icon("walking"))),
                    tabPanel("Test Information Curve (TIC)",
                             fluidRow(column(width = 5,br(),br(),tableOutput("interpretifseok"),fluidRow(column(shinyWidgets::radioGroupButtons(checkIcon = list( yes = icon("square-check"),no = icon("square")),label = "Item Information",inputId = "iictestplh",choices = c( "All_ITEM","Fit_ITEM"),status = "primary",justified =T,direction = "horizontal",individual = T,size = "sm"),width = 12)),hr(),br(),br(),br(),br(),br(),br(),br(),br(),fluidRow(actionButton("buttoninfor12","Step 5c",icon =  icon("walking")),column(width = 1,""),shinyWidgets::downloadBttn('downloadReport',style = "simple",color = "primary",size = "sm"))),
-                                     column(width = 7,plotOutput("iictest",height = "600px")))),width = 12))
+                                     column(width = 7,plotOutput("iictest",height = "600px")))),width = 12)),
+
+    tabItem(tabName = "h7",
+            tabBox(title = "",id="tabset1",width = 12,
+                   tabPanel("About Setting Data",icon = icon("info-circle"),
+                            shinyWidgets::radioGroupButtons(checkIcon = list( yes = icon("square-check"),no = icon("square")),
+                                                            inputId = "contohdata",
+                                                            label = "",
+                                                            choices = c("Dichotomous Parameter", "Polytomous parameter", "Scored Data"),
+                                                            status = "primary",
+                                                            justified = TRUE,
+                                                            direction = "horizontal",
+                                                            individual = TRUE,
+                                                            size = "normal"),
+                            conditionalPanel(condition = "input.contohdata=='Dichotomous Parameter' ",
+                                             column(width = 12,
+                                                    fluidRow(
+                                                      h5("Instruction:",style="color:red"),
+                                                      h5("if your instrument consists of 10 items, then you can write the item parameters in an excel file as in the example below. ",style="color:blue"),br(),
+                                                    ),
+                                                    fluidRow(
+                                                      column(width = 3,align="center",
+                                                             wellPanel(
+                                                               h5("for 1PL or Rasch Model"),
+                                                               tableOutput("onepl"))),
+                                                      column(width = 3,align="center",
+                                                             wellPanel(
+                                                               h5("for 2PL Model"),
+                                                               tableOutput("twopl"))),
+
+                                                      column(width = 3,align="center",
+                                                             wellPanel(
+                                                               h5("for 3PL Model"),
+                                                               tableOutput("threepl"))),
+                                                      column(width = 3,align="center",
+                                                             wellPanel(
+                                                               h5("for 4PL Model"),
+                                                               tableOutput("fourpl")))
+                                                    )
+                                             )
+                            ),
+                            conditionalPanel(condition = "input.contohdata=='Polytomous parameter' ",
+                                             h5("Instruction:",style="color:red"),
+                                             h5("suppose your instrument consists of 10 items and each item has 4 responses (strongly disagree, disagree, agree, strongly agree), then you can write the item parameters in the *.xlsx  file as in the example below. Given b1, b2, and b3 are the threshold, it must be written from largest to smallest for each item. ",style="color:blue"),br(),
+                                             fluidRow(
+                                               column(width = 3,align="center",
+                                                      h5("for GRM and GPCM"),
+                                                      tableOutput("poli")))
+                            ),
+                            conditionalPanel(condition = "input.contohdata=='Scored Data' ",
+                                             h5("Instruction:",style="color:red"),
+                                             h5("suppose your instruments consist of 10 items. The number of students (respondents) who will be scored is 15. then you can write the response in your *.xlsx file as in the example below. The row shows the number of students (respondents) and the column shows the number of items responded to by the respondent.",style="color:blue"),
+                                             fluidRow(
+                                               column(width = 6,align="center",
+                                                      wellPanel(
+                                                        h5("Dichotomous data"),
+                                                        tableOutput("dikodata"))),
+                                               column(width = 6,align="center",
+                                                      wellPanel(
+                                                        h5("Polytomous data"),
+                                                        tableOutput("polidata"))))
+                            )
+                   ),
+
+
+
+                   tabPanel("Input Data and Setting",icon = icon("upload"),
+
+                            fluidRow(
+                              box(
+                                width = 3,
+                                solidHeader = TRUE,
+                                title = h6("Data Setting",style="align:center;font-weight:bold"),
+                                headerBorder = TRUE,
+                                boxToolSize = "sm",
+                                collapsible = FALSE,
+                                fluidRow(
+                                  column(width = 3,
+                                         numericInput(inputId='batastetaskor' ,
+                                                      label="",
+                                                      value=3,
+                                                      min = 0,
+                                                      max = 10,
+                                                      step = 1,
+                                                      width = "100%")),
+                                  column(width = 9,br(),
+                                         fluidRow(
+                                           h6("The interval of theta score: "),
+                                           textOutput("bataskorteta")
+                                         )
+                                  )
+                                ),
+
+                                fluidRow(
+                                  column(width = 6,
+                                         selectInput(inputId = 'pilihkelasskor',width = "100%",
+                                                     label = "Data Type",
+                                                     choices = c("Dichotomous", "Polytomous"),
+                                                     selected = "Dichotomous")),
+                                  column(width = 6,
+                                         selectInput(inputId = 'pilihestimatelskor',width = "100%",
+                                                     label = "Estimation method",
+                                                     choices = c("EAP","MAP","ML","WLE","EAPsum","plausible","classify"),
+                                                     selected = "EAP"))
+                                ),
+
+                                fluidRow(
+                                  column(width=12,
+                                         conditionalPanel(condition = "input.pilihkelasskor=='Polytomous' ",
+                                                          shinyWidgets::radioGroupButtons(checkIcon = list( yes = icon("square-check"),no = icon("square") ),
+                                                                                          inputId = "pilihmodelskor",
+                                                                                          label = "IRT Model",
+                                                                                          choices = c("GRM","GPCM"),
+                                                                                          status = "primary",
+                                                                                          justified = TRUE,
+                                                                                          direction = "horizontal",
+                                                                                          individual = TRUE,
+                                                                                          size = "normal")
+                                         ))
+                                ),
+                                column(width=12,
+                                       # style="color:blue",
+                                       fileInput("ambildatabaru", "Scored Data",  accept = c( "csv","xlsx","xls"),width = "100%")
+                                ),
+                                column(width=12,
+                                       # style="color:blue",
+                                       fileInput("ambildatapari", "Items Parameter",  accept = c( "csv","xlsx","xls"),width = "100%")
+                                )
+                              ),
+                              box(
+                                width = 9,
+                                solidHeader = TRUE,
+                                title = h6("Data View",style="align:center;font-weight:bold"),
+                                headerBorder = TRUE,
+                                boxToolSize = "sm",
+                                collapsible = FALSE,
+
+                                column(width = 12,
+                                       wellPanel(
+                                         h5("Scored Data"),
+                                         DT::DTOutput("tampildataskor"))),
+                                column(width = 12,
+                                       wellPanel(
+                                         h5("Items Parameter"),
+                                         DT::DTOutput("tampildataparskor")))
+
+                              ))
+                   ),
+                   tabPanel("Scoring Result",icon = icon("eye"),align="center",
+
+                            fluidRow(
+                              box(
+                                width = 5,
+                                solidHeader = TRUE,
+                                title = h6("IRT  Score",style="align:center;font-weight:bold"),
+                                headerBorder = TRUE,
+                                boxToolSize = "sm",
+                                collapsible = FALSE,
+                                DT::DTOutput("tampilskor")
+                              ),
+                              box(
+                                width = 2,
+                                solidHeader = TRUE,
+                                title = h6("Convert ",style="align:center;font-weight:bold"),
+                                headerBorder = TRUE,
+                                boxToolSize = "sm",
+                                collapsible = FALSE,
+                                fluidRow(
+                                  column(width = 6,
+                                         numericInput("batasbwh"," Lower ",min = -10,max = 10,step = 1,value=-3)),
+                                  column(width = 6,
+                                         numericInput("batasats", "upper ",min = -10,max = 10,step = 1,value = 3))),
+                                shinyWidgets::actionBttn("analisis1","Convert",size = "lg",color = "success",style = "material-flat"),hr(),
+                                conditionalPanel(condition = "input.analisis1!=0",
+                                                 downloadButton("skordownload","download"))
+
+                              ),
+                              box(
+                                width = 5,
+                                solidHeader = TRUE,
+                                title = h6("0-100 Score",style="align:center;font-weight:bold"),
+                                headerBorder = TRUE,
+                                boxToolSize = "sm",
+                                collapsible = FALSE,
+                                DT::DTOutput("tampilskor100")
+                              )
+                            ),
+                            conditionalPanel(condition = "input.analisis1!=0",
+                                             fluidRow(
+                                               column(width=6,
+                                                      h6("Histrogram of IRT Score",style="align:center;font-weight:bold"),
+                                                      plotOutput("histogramirt")
+                                               ),
+                                               column(width=6,
+                                                      h6("Histogram of 0-100 Score",style="align:center;font-weight:bold"),
+                                                      plotOutput("histogramideal")
+                                               )
+                                             )
+                            )
+                   ),
+                   tabPanel("Individual Analysis",
+
+                            fluidRow(
+                              column(width = 4,
+                                     column(width = 12,
+                                            infoBox(
+                                              tabName = "cardsAPI0",
+                                              title = "",
+                                              value = textOutput("nama"),
+                                              color = "primary",
+                                              icon = icon("user"),
+                                              width = 12
+                                            )),
+                                     column(width = 12,
+                                            infoBox(
+                                              tabName = "cardsAPI1",
+                                              title = "",
+                                              value = textOutput("skorirtsiswa"),
+                                              color = "danger",
+                                              icon = icon("laptop-code"),
+                                              width = 12
+                                            )),
+                                     column(width = 12,
+                                            infoBox(
+                                              tabName = "cardsAPI2",
+                                              title = "",
+                                              value = textOutput("skoridealsiswa"),
+                                              color = "success",
+                                              icon = icon("book"),
+                                              width = 12
+                                            ))),
+                              column(width = 8,
+                                     box(
+                                       width = 12,
+                                       solidHeader = TRUE,
+                                       title = h6("0-100 Score",style="align:center;font-weight:bold"),
+                                       headerBorder = TRUE,
+                                       boxToolSize = "sm",
+                                       collapsible = FALSE,
+                                       plotOutput("mapskor"),
+
+                                       fluidRow(
+                                         column(width = 6,
+                                                actionButton("kembali","Previous",width="75%",style = "background-color:green;margin:5px")),
+                                         column(width = 6,
+                                                actionButton("lanjut","Next",width="75%",style = "background-color:green;margin:5px")))
+                                     )
+                              )
+
+                            ))
+
+
+
+            )
+    )
+
   ))
 )
 
